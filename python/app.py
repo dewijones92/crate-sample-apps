@@ -197,11 +197,6 @@ class PostList(PostResource):
             'id, created, "user", text, image_ref, like_count',
             ', '.join('?' * len(v))
         ), v)
-        # self.cursor.execute("""INSERT INTO {} ({}) values ({})""".format(
-        #     self.__table__,
-        #     ', "'.join(k).join('"'),
-        #     ', '.join('?' * len(v))
-        # ), v)
         # refresh table to make sure new record is immediately available
         self.refresh_table()
         # fetch new record
