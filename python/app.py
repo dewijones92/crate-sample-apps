@@ -39,10 +39,10 @@ from flask import (
     make_response,
     jsonify
 )
+
 from flask.ext.restful import Api, Resource
 from flask.ext.restful.reqparse import RequestParser
 from flask.ext.cors import CORS
-
 
 # app configuration
 CRATE_HOST = 'localhost:4200'
@@ -108,7 +108,7 @@ class Post(PostResource):
         self.cursor.execute("""
             SELECT p.*, c.name as country, c.geometry as area
             FROM guestbook.posts AS p, guestbook.countries AS c
-            WHERE within(p.user['location'], c.geometry)
+            WHERE within(p."user"['location'], c.geometry)
               AND p.id = ?
         """, (id,))
         # convert response from Crate into
@@ -158,7 +158,7 @@ class PostList(PostResource):
         self.cursor.execute("""
             SELECT p.*, c.name as country, c.geometry as area
             FROM guestbook.posts AS p, guestbook.countries AS c
-            WHERE within(p.user['location'], c.geometry)
+            WHERE within(p."user"['location'], c.geometry)
             ORDER BY p.created DESC
         """)
         # convert response from Crate into
@@ -170,14 +170,14 @@ class PostList(PostResource):
     def post(self):
         # parse incoming POST data
         reqparse = RequestParser()
-        reqparse.add_argument('user', type=dict, location='json')
+        reqparse.add_argument('"user"', type=dict, location='json')
         reqparse.add_argument('text', type=str, location='json')
         reqparse.add_argument('image_ref', type=str, location='json')
         data = reqparse.parse_args()
         # check for required data
         if not data.text:
             return self.argument_required('text')
-        if not data.get('user', {}).get('location'):
+        if not data.get('”user"', {}).get('location'):
             return self.argument_required('location')
         # generate a new time based UUID
         post_id = str(uuid.uuid1())
@@ -204,7 +204,7 @@ class PostList(PostResource):
         self.cursor.execute("""
             SELECT p.*, c.name as country, c.geometry as area
             FROM guestbook.posts AS p, guestbook.countries AS c
-            WHERE within(p.user['location'], c.geometry)
+            WHERE within(p."user"['location'], c.geometry)
               AND p.id = ?
         """, (post_id,))
         # convert response from Crate into
@@ -230,7 +230,7 @@ class Like(PostResource):
             self.cursor.execute("""
                 SELECT p.*, c.name as country, c.geometry as area
                 FROM guestbook.posts AS p, guestbook.countries AS c
-                WHERE within(p.user['location'], c.geometry)
+                WHERE within(p."user"['location'], c.geometry)
                   AND p.id = ?
             """, (id,))
             # convert response from Crate into
@@ -260,7 +260,7 @@ class Search(PostResource):
             SELECT p.*, p._score AS _score,
               c.name AS country, c.geometry AS area
             FROM guestbook.posts AS p, guestbook.countries AS c
-            WHERE within(p.user['location'], c.geometry)
+            WHERE within(p."user"['location'], c.geometry)
               AND match(text, ?)
             ORDER BY _score DESC
         """, (data.query_string,))
