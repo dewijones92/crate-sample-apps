@@ -170,14 +170,14 @@ class PostList(PostResource):
     def post(self):
         # parse incoming POST data
         reqparse = RequestParser()
-        reqparse.add_argument('"user"', type=dict, location='json')
+        reqparse.add_argument('user', type=dict, location='json')
         reqparse.add_argument('text', type=str, location='json')
         reqparse.add_argument('image_ref', type=str, location='json')
         data = reqparse.parse_args()
         # check for required data
         if not data.text:
             return self.argument_required('text')
-        if not data.get('”user"', {}).get('location'):
+        if not data.get('user', {}).get('location'):
             return self.argument_required('location')
         # generate a new time based UUID
         post_id = str(uuid.uuid1())
@@ -190,14 +190,18 @@ class PostList(PostResource):
             image_ref = data.image_ref,
             like_count = 0,
         )
-        k = list(values.keys())
         v = list(values.values())
         # compile and execute INSERT statement
         self.cursor.execute("""INSERT INTO {} ({}) VALUES ({})""".format(
             self.__table__,
-            ', '.join(k),
+            'id, created, "user", text, image_ref, like_count',
             ', '.join('?' * len(v))
         ), v)
+        # self.cursor.execute("""INSERT INTO {} ({}) values ({})""".format(
+        #     self.__table__,
+        #     ', "'.join(k).join('"'),
+        #     ', '.join('?' * len(v))
+        # ), v)
         # refresh table to make sure new record is immediately available
         self.refresh_table()
         # fetch new record
