@@ -117,7 +117,7 @@ search_posts(CraterlClientRef, SearchTerm) ->
 -spec create_post(CraterlClientRef::craterl:craterl_client_ref(), Payload::map()) -> {ok, post()}|{error, term()}.
 create_post(CraterlClientRef, #{<<"text">> := Text,
                                 <<"user">> := User}=Payload) when is_map(User) and is_binary(Text) ->
-  Id = uuid:uuid_to_string(uuid:get_v4(weak), binary_standard),
+  Id = uuid:uuid_to_string(uuid:get_v4(strong), binary_standard),
   ImageRef = maps:get(<<"image_ref">>, Payload, null),
   case craterl:sql(CraterlClientRef, ?INSERT_STMT, [Id, ImageRef, Text, User]) of
     {ok, _Response} ->

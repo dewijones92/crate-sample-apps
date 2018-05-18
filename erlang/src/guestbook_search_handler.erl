@@ -29,7 +29,13 @@
 -include("guestbook.hrl").
 
 %% API
--export([init/3, handle/2, terminate/3]).
+-export([
+      init/3,
+      handle/2,
+      terminate/3
+      ]).
+
+-include("guestbook_cors.hrl").
 
 -record(state, {
   craterl :: craterl:craterl_client_ref()
@@ -44,8 +50,12 @@ init(_, Req, Opts) ->
 handle(Req, State) ->
   {Method, Req2} = cowboy_req:method(Req),
   handle(Method, Req2, State).
+handle(<<"OPTIONS">>, Req, State) ->
+  Req2 = addCORSHeaders(Req),
+  {ok, cowboy_req:set_resp_body("OK", Req2), State};
 handle(<<"POST">>, Req, #state{craterl=CraterlClientRef}=State) ->
-  Req4 = case get_search_term(Req) of
+  Req5 = addCORSHeaders(Req),
+  Req4 = case get_search_term(Req5) of
     {ok, SearchTerm, Req2} ->
       Posts = guestbook_post_model:search_posts(CraterlClientRef, SearchTerm),
       {ok, Req3} = cowboy_req:reply(

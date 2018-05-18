@@ -20,7 +20,6 @@
 %%% software solely pursuant to the terms of the relevant commercial agreement.
 %%%-------------------------------------------------------------------
 
-
 -define(JSON_CT_HEADER, {<<"content-type">>, <<"application/json">>}).
 -define(GIF_CT_HEADER, {<<"content-type">>, <<"image/gif">>}).
 -define(JSON_CONTENT_TYPE, { <<"application">>, <<"json">>, []}).

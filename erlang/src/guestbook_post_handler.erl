@@ -42,6 +42,7 @@
 ]).
 
 -include("guestbook.hrl").
+-include("guestbook_cors.hrl").
 
 init({tcp, http}, _Req, _Opts) ->
   {upgrade, protocol, cowboy_rest}.
@@ -51,7 +52,8 @@ rest_init(Req, Opts) ->
   {ok, Req, #{craterl => ClientRef}}.
 
 allowed_methods(Req, State) ->
-  {[<<"GET">>, <<"PUT">>, <<"DELETE">>], Req, State}.
+  Req2 = addCORSHeaders(Req),
+  {[<<"GET">>, <<"PUT">>, <<"DELETE">>, <<"OPTIONS">>], Req2, State}.
 
 delete_resource(Req, #{craterl := ClientRef}=State) ->
   {Id, Req2} = cowboy_req:binding(id, Req),
@@ -68,12 +70,14 @@ content_types_provided(Req, State) ->
 
 content_types_accepted(Req, State) ->
   {[
-    {?JSON_CONTENT_TYPE, post_from_json}
+    {'*', post_from_json}
   ], Req, State}.
 
 malformed_request(Req, State) ->
   {Method, Req2} = cowboy_req:method(Req),
   malformed_request(Method, Req2, State).
+malformed_request(<<"OPTIONS">>, Req, State) ->
+  {false, Req, State};
 malformed_request(<<"PUT">>, Req, State) ->
   {ok, Body, Req2} = cowboy_req:body(Req),
   case Body of

@@ -49,7 +49,7 @@
 ]).
 
 -include("guestbook.hrl").
-
+-include("guestbook_cors.hrl").
 
 init({_Transport, _Type}, _Req, _Opts) ->
   {upgrade, protocol, cowboy_rest}.
@@ -61,12 +61,13 @@ rest_init(Req, Opts) ->
 %% returns the allowed methods of this handler
 %% GET and POST
 allowed_methods(Req, State) ->
-  {[<<"GET">>, <<"POST">>], Req, State}.
+  Req2 = addCORSHeaders(Req),
+  {[<<"GET">>, <<"POST">>, <<"OPTIONS">>], Req2, State}.
 
 %% configures a separate callback for each accepted content-type
 content_types_accepted(Req, State) -> {
   [
-    {?JSON_CONTENT_TYPE, post_from_json}
+    {'*', post_from_json}
   ],
   Req, State
 }.
@@ -112,6 +113,8 @@ malformed_request(<<"POST">>, Req, State) ->
           {true, Req5, State}
       end
   end;
+malformed_request(<<"OPTIONS">>, Req, State) ->
+  {false, Req, State};
 malformed_request(<<"GET">>, Req, State) ->
   {false, Req, State}.
 
@@ -119,6 +122,9 @@ malformed_request(<<"GET">>, Req, State) ->
 resource_exists(Req, State) ->
   {Method, Req2} = cowboy_req:method(Req),
   resource_exists(Method, Req2, State).
+resource_exists(<<"OPTIONS">>, Req, State) ->
+  %% collection of posts always exists
+  {true, Req, State};
 resource_exists(<<"GET">>, Req, State) ->
   %% collection of posts always exists
   {true, Req, State};
