@@ -56,13 +56,13 @@ init({_Transport, _Type}, _Req, _Opts) ->
 
 rest_init(Req, Opts) ->
   {craterl, ClientRef} = lists:keyfind(craterl, 1, Opts),
-  {ok, Req, #{craterl => ClientRef}}. %% we use a map as state
+  Req2 = addCORSHeaders(Req),
+  {ok, Req2, #{craterl => ClientRef}}. %% we use a map as state
 
 %% returns the allowed methods of this handler
 %% GET and POST
 allowed_methods(Req, State) ->
-  Req2 = addCORSHeaders(Req),
-  {[<<"GET">>, <<"POST">>, <<"OPTIONS">>], Req2, State}.
+  {[<<"GET">>, <<"POST">>, <<"OPTIONS">>], Req, State}.
 
 %% configures a separate callback for each accepted content-type
 content_types_accepted(Req, State) -> {

@@ -42,11 +42,11 @@ init({tcp, http}, _Req, _Opts) ->
 
 rest_init(Req, Opts) ->
   {craterl, ClientRef} = lists:keyfind(craterl, 1, Opts),
-  {ok, Req, #{craterl => ClientRef}}.
+  Req2 = addCORSHeaders(Req),
+  {ok, Req2, #{craterl => ClientRef}}.
 
 allowed_methods(Req, State) ->
-  Req2 = addCORSHeaders(Req),
-  {[<<"PUT">>, <<"OPTIONS">>], Req2, State}.
+  {[<<"PUT">>, <<"OPTIONS">>], Req, State}.
 
 resource_exists(Req, #{craterl := CrateClientRef}=State) ->
   {Method, Req3} = cowboy_req:method(Req),

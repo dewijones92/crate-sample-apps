@@ -49,11 +49,11 @@ init({tcp, http}, _Req, _Opts) ->
 
 rest_init(Req, Opts) ->
   {craterl, ClientRef} = lists:keyfind(craterl, 1, Opts),
-  {ok, Req, #{craterl => ClientRef}}.
+  Req2 = addCORSHeaders(Req),
+  {ok, Req2, #{craterl => ClientRef}}.
 
 allowed_methods(Req, State) ->
-  Req2 = addCORSHeaders(Req),
-  {[<<"GET">>, <<"PUT">>, <<"DELETE">>, <<"OPTIONS">>], Req2, State}.
+  {[<<"GET">>, <<"PUT">>, <<"DELETE">>, <<"OPTIONS">>], Req, State}.
 
 delete_resource(Req, #{craterl := ClientRef}=State) ->
   {Id, Req2} = cowboy_req:binding(id, Req),

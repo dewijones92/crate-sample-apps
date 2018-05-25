@@ -45,17 +45,16 @@
 
 init(_, Req, Opts) ->
   {craterl, CraterlClientRef} = lists:keyfind(craterl, 1, Opts),
-  {ok, Req, #state{craterl=CraterlClientRef}}.
+  Req2 = addCORSHeaders(Req),
+  {ok, Req2, #state{craterl=CraterlClientRef}}.
 
 handle(Req, State) ->
   {Method, Req2} = cowboy_req:method(Req),
   handle(Method, Req2, State).
 handle(<<"OPTIONS">>, Req, State) ->
-  Req2 = addCORSHeaders(Req),
-  {ok, cowboy_req:set_resp_body("OK", Req2), State};
+  {ok, cowboy_req:set_resp_body("OK", Req), State};
 handle(<<"POST">>, Req, #state{craterl=CraterlClientRef}=State) ->
-  Req5 = addCORSHeaders(Req),
-  Req4 = case get_search_term(Req5) of
+  Req4 = case get_search_term(Req) of
     {ok, SearchTerm, Req2} ->
       Posts = guestbook_post_model:search_posts(CraterlClientRef, SearchTerm),
       {ok, Req3} = cowboy_req:reply(
