@@ -36,7 +36,7 @@ app.get('/posts', (req, response) => {
   });
 });
 
-// get a post by id
+// Get a post by id
 app.get('/post/:id', (req, response) => {
   crate.execute("SELECT p.*, c.name as country, c.geometry as area "
                 + "FROM guestbook.posts AS p, guestbook.countries AS c "
@@ -46,7 +46,7 @@ app.get('/post/:id', (req, response) => {
   });
 });
 
-// insert new post
+// Insert new post
 app.post('/posts', (req, response) => {
   if (!req.body) {
     return response.json({
@@ -89,7 +89,7 @@ app.post('/posts', (req, response) => {
   });
 });
 
-// change the text of a post
+// Change the text of a post
 app.put('/post/:id', (req, response) => {
   if (!req.body) {
     return response.json({
@@ -119,7 +119,7 @@ app.put('/post/:id', (req, response) => {
   });
 });
 
-// increments the number of likes for a given post
+// Increments the number of likes for a given post
 app.put('/post/:id/like', (req, response) => {
   crate.execute("SELECT * FROM guestbook.posts WHERE id=?",
     [req.params.id]).then((res) => {
@@ -147,7 +147,7 @@ app.put('/post/:id/like', (req, response) => {
   });
 });
 
-// delete a post
+// Delete a post
 app.delete('/post/:id', (req, response) => {
   crate.execute('SELECT * FROM guestbook.posts WHERE id = ?',
     [req.params.id]).then((res) => {
@@ -165,8 +165,7 @@ app.delete('/post/:id', (req, response) => {
   });
 });
 
-// get all images
-// get a post by id
+// Get all images
 app.get('/images', (req, response) => {
   crate.execute("SELECT digest, last_modified FROM blob.guestbook_images")
     .then((res) => {
@@ -174,7 +173,7 @@ app.get('/images', (req, response) => {
     });
 });
 
-// get image by id
+// Get image by id
 app.get('/image/:digest', (req, response) => {
   let url = 'http://localhost:4200/_blobs/guestbook_images/'
             + req.params.digest;
@@ -197,7 +196,7 @@ app.get('/image/:digest', (req, response) => {
   });
 });
 
-// delete image by id
+// Delete image by id
 app.delete('/image/:digest', (req, response) => {
   let url = 'http://localhost:4200/_blobs/guestbook_images/'
             + req.params.digest;
@@ -217,7 +216,7 @@ app.delete('/image/:digest', (req, response) => {
   });
 });
 
-// upload image
+// Upload image
 app.post('/images', (req, response) => {
   if (!req.body.blob) {
     response.status(400).json({
@@ -252,7 +251,7 @@ app.post('/images', (req, response) => {
   });
 });
 
-// search
+// Search
 app.post('/search', (req, response) => {
   if (req.body.query_string === "" || !req.body.query_string) {
     return response.status(404).json({
