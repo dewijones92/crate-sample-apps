@@ -2,7 +2,7 @@
 Node.js Backend App
 ===================
 
-A Node.js backend app using Express.
+A Node.js backend app using express and node-crate.
 
 Prerequisites
 =============

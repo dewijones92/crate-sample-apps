@@ -1,7 +1,7 @@
 {
   "name": "nodejs",
   "version": "1.0.0",
-  "description": "Node.js example app for crate db",
+  "description": "Node.js example app for CrateDB",
   "main": "server.js",
   "scripts": {
     "start": "nodemon server.js",

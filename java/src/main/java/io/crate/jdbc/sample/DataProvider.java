@@ -40,7 +40,7 @@ class DataProvider {
         props.put("password", getProperty("crate.password"));
         try {
             connection = DriverManager.getConnection(
-                    String.format(Locale.ENGLISH, "jdbc:crate://%s:%d/", host, psqlPort), props
+                String.format(Locale.ENGLISH, "jdbc:crate://%s:%d/", host, psqlPort), props
             );
         } catch (SQLException e) {
             throw new SQLException("Cannot connect to the database", e);
