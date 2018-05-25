@@ -192,7 +192,6 @@ app.get('/image/:digest', (req, response) => {
       });
       response.end(new Buffer(body));
     }
-
   });
 });
 
