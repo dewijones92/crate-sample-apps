@@ -43,3 +43,6 @@ To run the application on a specific port, do this:
 .. _CrateDB JDBC driver: https://crate.io/docs/clients/jdbc/
 .. _Java 8: http://www.oracle.com/technetwork/java/javase/overview/java8-2100321.html
 .. _Apache Maven: https://maven.apache.org/index.html
+
+
+docker run -it -v maven-repo:/root/.m2 -v "$(pwd)":/usr/src/mymaven -w /usr/src/mymaven -p 8080:8080 --net="host" maven:3.5.4-jdk-8-alpine sh dockergo.sh
