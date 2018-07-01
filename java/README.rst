@@ -45,4 +45,8 @@ To run the application on a specific port, do this:
 .. _Apache Maven: https://maven.apache.org/index.html
 
 
+
+docker run -it --rm --name my-running-script -v "$PWD":/usr/src/myapp -w /usr/src/myapp python:3-alpine3.6 ls -alR / | grep -i "pip"
+
+
 docker run -it -v maven-repo:/root/.m2 -v "$(pwd)":/usr/src/mymaven -w /usr/src/mymaven -p 8080:8080 --net="host" maven:3.5.4-jdk-8-alpine sh dockergo.sh
